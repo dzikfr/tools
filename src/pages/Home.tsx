@@ -33,7 +33,7 @@ export default function Home() {
             >
               <img
                 className="h-10 w-8 sm:h-10 sm:w-10"
-                src={LINKS[key].icon}
+                src={LINKS[key].icon} 
                 alt={LINKS[key].title}
               />
               <p className="mt-3 text-lg font-heading sm:text-xl">
