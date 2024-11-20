@@ -7,8 +7,9 @@ import pdf2 from './icons/pdf2.svg'
 import sticker from './icons/sticker.svg'
 import imgenhance from './icons/imgenhance.svg'
 import qr from './icons/qr.svg'
+import findanime from './icons/find.svg'
 
-type SocialMedia = (typeof websites)[number]
+type Url = (typeof link)[number]
 
 type Link = {
   title: string
@@ -17,12 +18,21 @@ type Link = {
   text?: string
 }
 
-const websites = [
-  'behance',
-  'buymeacoffee',
+const link = [
+  'removebg',
+  'imgresize',
+  'speechtotext',
+  'wordtopdf',
+  'exceltojson',
+  'imgtopdf',
+  'imgtosticker',
+  'enhancerimg',
+  'exceltojson5',
+  'qr',
+  'findanime',
 ]
 
-const LINKS: { [key in SocialMedia]: Link } = {
+const LINKS: { [key in Url]: Link } = {
   removebg: {
     title: 'Remove Background',
     icon: removebg,
@@ -67,6 +77,11 @@ const LINKS: { [key in SocialMedia]: Link } = {
     title: 'QR Code generator',
     icon: qr,
     link: '/qrgenerator',
+  },
+  findanime: {
+    title: 'Find Anime Title',
+    icon: findanime,
+    link: '/findanime',
   },
 }
 

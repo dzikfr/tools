@@ -1,110 +1,128 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import { removeBackground as imglyRemoveBackground } from '@imgly/background-removal'
-import Button from '../components/Button'
+import React, { useState } from "react";
+import { removeBackground as imglyRemoveBackground } from "@imgly/background-removal";
+import Button from "../components/Button";
+import Tittle from "../components/Title";
+import FileInput from "../components/FileInput";
 
 const RemoveBg = () => {
-  const [image, setImage] = useState<File | null>(null)
-  const [removedBgImage, setRemovedBgImage] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(false) // State for loading
+  const [image, setImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [removedBgImage, setRemovedBgImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files ? e.target.files[0] : null
+    const file = e.target.files ? e.target.files[0] : null;
     if (file) {
-      setImage(file)
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setPreviewImage(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const removeBackground = async () => {
     if (image) {
-      setIsLoading(true) // Set loading state to true before processing
+      setIsLoading(true);
       try {
-        const reader = new FileReader()
+        const reader = new FileReader();
         reader.onloadend = async () => {
-          const imageSrc = reader.result
+          const imageSrc = reader.result;
 
-          if (typeof imageSrc === 'string') {
-            const resultBlob = await imglyRemoveBackground(imageSrc)
-            const url = URL.createObjectURL(resultBlob)
-            setRemovedBgImage(url)
+          if (typeof imageSrc === "string") {
+            const resultBlob = await imglyRemoveBackground(imageSrc);
+            const url = URL.createObjectURL(resultBlob);
+            setRemovedBgImage(url);
+            setPreviewImage(null);
           } else {
-            console.error('Gambar tidak dalam format yang valid')
+            console.error("Gambar tidak dalam format yang valid");
           }
-        }
+        };
 
-        reader.readAsDataURL(image)
+        reader.readAsDataURL(image);
       } catch (error) {
-        console.error('Error removing background:', error)
+        console.error("Error removing background:", error);
       } finally {
-        setIsLoading(false) // Set loading state to false after processing
+        setIsLoading(false);
       }
     }
-  }
+  };
 
   const downloadImage = () => {
     if (removedBgImage) {
-      const link = document.createElement('a')
-      link.href = removedBgImage
-      link.download = 'removedbg.png'
-      link.click()
+      const link = document.createElement("a");
+      link.href = removedBgImage;
+      link.download = "removedbg.png";
+      link.click();
     }
-  }
+  };
 
   const clearImage = () => {
-    setImage(null)
-    setRemovedBgImage(null)
-  }
+    setImage(null);
+    setPreviewImage(null);
+    setRemovedBgImage(null);
+  };
 
   return (
     <div className="flex flex-col items-center p-6">
-      <h1 className="mb-6 border-4 border-black bg-yellow-300 px-4 py-2 text-4xl font-extrabold text-black">
-        Remove Background
-      </h1>
+      <Tittle title="Remove Background" />
 
       {/* Input file */}
-      <div className="mt-6 flex justify-center">
-        <label
-          htmlFor="file-upload"
-          className="rounded-lg border-4 border-black bg-white px-6 py-3 font-bold text-black shadow-[3px_-3px_0px_#000000]"
-        >
-          Upload File
-        </label>
-        <input
-          id="file-upload"
-          type="file"
-          onChange={handleImageChange}
-          className="hidden"
-        />
+      <FileInput
+        id="file-upload"
+        label="Upload File"
+        onChange={handleImageChange}
+      />
+
+      {/* Display preview or result */}
+      <div className="mt-6 flex flex-col items-center">
+        {previewImage && !removedBgImage && (
+          <div>
+            <h3 className="text-xl font-semibold">Preview</h3>
+            <h5 className="text-sm">When generate, in will take some time</h5>
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="mt-4 h-auto max-w-full rounded-lg shadow-md"
+            />
+          </div>
+        )}
+
+        {removedBgImage && (
+          <div>
+            <h3 className="text-xl font-semibold">Result</h3>
+            <img
+              src={removedBgImage}
+              alt="Removed Background"
+              className="mt-4 h-auto max-w-full rounded-lg shadow-md"
+            />
+          </div>
+        )}
       </div>
 
-      {/* Button to generate */}
-      <div className="mt-6 flex justify-center">
-        <Button onClick={removeBackground}>Generate</Button>
-      </div>
-
-      {/* Display result */}
-      {removedBgImage && !isLoading && (
-        <div className="text-center">
-          <h3 className="text-xl font-semibold">Result</h3>
-          <img
-            src={removedBgImage}
-            alt="Removed Background"
-            className="mt-4 h-auto max-w-full rounded-lg shadow-md"
-          />
-          {/* Download button */}
-          <div className="mt-4">
+      {/* Buttons */}
+      <div className="mt-6 flex flex-col items-center">
+        {!removedBgImage && (
+          <Button onClick={removeBackground}>
+            {isLoading ? "Processing..." : "Generate"}
+          </Button>
+        )}
+        {removedBgImage && (
+          <div>
             <Button onClick={downloadImage}>Download Image</Button>
+            <div className="mt-4">
+              <Button onClick={clearImage}>Clear Image</Button>
+            </div>
           </div>
-
-          {/* Clear button */}
-          <div className="mt-4">
-            <Button onClick={clearImage}>Clear Image</Button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default RemoveBg
+export default RemoveBg;

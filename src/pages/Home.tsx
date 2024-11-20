@@ -6,17 +6,17 @@ export default function Home() {
       <div className="mb-12 w-full xl:fixed xl:mb-0 xl:w-[500px]">
         <div className="mt-8">
           <h2 className="text-3xl font-heading sm:text-[44px] text-black">
-            File Converter
+            Web Tools
           </h2>
           <p className="mt-6 text-base font-base sm:text-xl text-black">
-            This website to convert your file. Check the{" "}
+            So many tools in one place. Check the{" "}
             <a
               className="font-heading underline"
               href="https://github.com/dzikfr/tools"
             >
               github repo
             </a>{" "}
-            for more info.
+            for more info and contribute.
           </p>
         </div>
       </div>
